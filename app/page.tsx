@@ -28,6 +28,18 @@ export default function Home() {
     setError("");
   }
 
+  function toggleTask(id: number) {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  }
+
+  function deleteTask(id: number) {
+    setTasks(tasks.filter((task) => task.id !== id));
+  }
+
   return (
     <main className="wrap">
       <h1>My ToDo App</h1>
@@ -51,13 +63,21 @@ export default function Home() {
         {tasks.map((task) => (
           <li key={task.id}>
             <label>
-              <input type="checkbox" checked={task.completed} readOnly />
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() => toggleTask(task.id)}
+              />
               <span className={task.completed ? "done" : ""}>{task.text}</span>
             </label>
-            <button className="delete">Delete</button>
+              <button className="delete">Delete</button>
           </li>
         ))}
       </ul>
+
+      {tasks.length === 0 && (
+        <p className="empty">No tasks yet. Add one above.</p>
+      )}
 
       <style>{`
         .wrap { max-width: 520px; margin: 0 auto; padding: 48px 20px; font-family: system-ui, sans-serif; }
@@ -69,6 +89,7 @@ export default function Home() {
         .add { background: #2563eb; color: #fff; }
         .delete { background: #fee2e2; color: #991b1b; }
         .error { color: #dc2626; margin: 8px 0 0; }
+        .empty { opacity: 0.7; margin-top: 16px; }
         ul { list-style: none; padding: 0; margin: 24px 0 0; }
         li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(128, 128, 128, 0.35); }
         label { display: flex; align-items: center; gap: 10px; cursor: pointer; }

@@ -1,35 +1,62 @@
+"use client";
+
+import { useState } from "react";
+
+type Task = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
+
 export default function Home() {
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: 1, text: "Finish assignment", completed: false },
+    { id: 2, text: "Study Next.js", completed: false },
+    { id: 3, text: "Setup Git repository", completed: true },
+  ]);
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
+
+  function addTask() {
+    const text = input.trim();
+    if (!text) {
+      setError("Please enter a task before adding.");
+      return;
+    }
+    setTasks([...tasks, { id: Date.now(), text, completed: false }]);
+    setInput("");
+    setError("");
+  }
+
   return (
     <main className="wrap">
       <h1>My ToDo App</h1>
 
       <div className="row">
-        <input type="text" placeholder="Enter a task..." aria-label="New task" />
-        <button className="add">Add Task</button>
+        <input
+          type="text"
+          value={input}
+          placeholder="Enter a task..."
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addTask()}
+          aria-label="New task"
+        />
+        <button className="add" onClick={addTask}>
+          Add Task
+        </button>
       </div>
+      {error && <p className="error">{error}</p>}
 
       <ul>
-        <li>
-          <label>
-            <input type="checkbox" />
-            <span>Finish assignment</span>
-          </label>
-          <button className="delete">Delete</button>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" />
-            <span>Study Next.js</span>
-          </label>
-          <button className="delete">Delete</button>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" defaultChecked />
-            <span className="done">Setup Git repository</span>
-          </label>
-          <button className="delete">Delete</button>
-        </li>
+        {tasks.map((task) => (
+          <li key={task.id}>
+            <label>
+              <input type="checkbox" checked={task.completed} readOnly />
+              <span className={task.completed ? "done" : ""}>{task.text}</span>
+            </label>
+            <button className="delete">Delete</button>
+          </li>
+        ))}
       </ul>
 
       <style>{`
@@ -41,6 +68,7 @@ export default function Home() {
         button:focus-visible, input:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
         .add { background: #2563eb; color: #fff; }
         .delete { background: #fee2e2; color: #991b1b; }
+        .error { color: #dc2626; margin: 8px 0 0; }
         ul { list-style: none; padding: 0; margin: 24px 0 0; }
         li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(128, 128, 128, 0.35); }
         label { display: flex; align-items: center; gap: 10px; cursor: pointer; }

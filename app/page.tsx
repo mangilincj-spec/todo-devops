@@ -70,8 +70,10 @@ export default function Home() {
               />
               <span className={task.completed ? "done" : ""}>{task.text}</span>
             </label>
-              <button className="delete">Delete</button>
-          </li>
+ <button className="delete" onClick={() => deleteTask(task.id)}>
+              Delete
+            </button>
+                      </li>
         ))}
       </ul>
 
